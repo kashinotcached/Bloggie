@@ -19,7 +19,7 @@ public class AddModel : PageModel
     {
     }
 
-    public void OnPost()
+    public IActionResult OnPost()
     {
         var blogPost = new BlogPost()
         {
@@ -36,5 +36,7 @@ public class AddModel : PageModel
 
         bloggieDbContext.BlogPosts.Add(blogPost);
         bloggieDbContext.SaveChanges();
+
+        return RedirectToPage("List");
     }
 }
