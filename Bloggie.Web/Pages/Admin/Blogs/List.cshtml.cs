@@ -10,10 +10,7 @@ public class ListModel : PageModel
 
     public List<BlogPost> BlogPosts { get; set; }
 
-    public ListModel(BloggieDbContext bloggieDbContext)
-    {
-        this.bloggieDbContext = bloggieDbContext;
-    }
+    public ListModel(BloggieDbContext bloggieDbContext) => this.bloggieDbContext = bloggieDbContext;
 
     public void OnGet()
     {
