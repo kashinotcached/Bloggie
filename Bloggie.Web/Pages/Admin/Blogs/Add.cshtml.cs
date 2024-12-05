@@ -19,7 +19,7 @@ public class AddModel : PageModel
     {
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPost()
     {
         var blogPost = new BlogPost()
         {
@@ -34,8 +34,8 @@ public class AddModel : PageModel
             UrlHandle = AddBlogPostRequest.UrlHandle
         };
 
-        bloggieDbContext.BlogPosts.Add(blogPost);
-        bloggieDbContext.SaveChanges();
+        await bloggieDbContext.BlogPosts.AddAsync(blogPost);
+        await bloggieDbContext.SaveChangesAsync();
 
         return RedirectToPage("List");
     }

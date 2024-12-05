@@ -17,15 +17,15 @@ public class EditModel : PageModel
         this.bloggieDbContext = bloggieDbContext;
     }
 
-    public void OnGet(Guid id)
+    public async Task OnGet(Guid id)
     {
-        blogPost = bloggieDbContext.BlogPosts.Find(id);
+        blogPost = await bloggieDbContext.BlogPosts.FindAsync(id);
     }
 
-    public IActionResult OnPostEdit()
+    public async Task<IActionResult> OnPostEdit()
     {
-        var existingBlogPost = bloggieDbContext.BlogPosts
-            .Find(blogPost.Id);
+        var existingBlogPost = await bloggieDbContext.BlogPosts
+            .FindAsync(blogPost.Id);
 
         if(existingBlogPost != null)
         {
@@ -41,18 +41,18 @@ public class EditModel : PageModel
             existingBlogPost.Visible = blogPost.Visible;
         }
 
-        bloggieDbContext.SaveChanges();
+        await bloggieDbContext.SaveChangesAsync();
         return RedirectToPage("List");
     }
 
-    public IActionResult OnPostDelete()
+    public async Task<IActionResult> OnPostDelete()
     {
-        var existingBlog = bloggieDbContext.BlogPosts.Find(blogPost.Id);
+        var existingBlog = await bloggieDbContext.BlogPosts.FindAsync(blogPost.Id);
 
         if(existingBlog != null)
         {
             bloggieDbContext.BlogPosts.Remove(existingBlog);
-            bloggieDbContext.SaveChanges();
+            await bloggieDbContext.SaveChangesAsync();
 
             return RedirectToPage("List");
         }
