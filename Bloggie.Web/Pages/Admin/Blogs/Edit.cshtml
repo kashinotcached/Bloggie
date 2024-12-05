@@ -55,8 +55,10 @@
                 </label>
             </div>
 
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Edit">Submit</button>
+
+                <button class="btn btn-danger" type="submit" asp-page-handler="Delete">Delete</button>
             </div>
         </form>
     </div>

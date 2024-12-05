@@ -22,7 +22,7 @@ public class EditModel : PageModel
         blogPost = bloggieDbContext.BlogPosts.Find(id);
     }
 
-    public IActionResult OnPost()
+    public IActionResult OnPostEdit()
     {
         var existingBlogPost = bloggieDbContext.BlogPosts
             .Find(blogPost.Id);
@@ -43,5 +43,20 @@ public class EditModel : PageModel
 
         bloggieDbContext.SaveChanges();
         return RedirectToPage("List");
+    }
+
+    public IActionResult OnPostDelete()
+    {
+        var existingBlog = bloggieDbContext.BlogPosts.Find(blogPost.Id);
+
+        if(existingBlog != null)
+        {
+            bloggieDbContext.BlogPosts.Remove(existingBlog);
+            bloggieDbContext.SaveChanges();
+
+            return RedirectToPage("List");
+        }
+
+        return Page();
     }
 }
