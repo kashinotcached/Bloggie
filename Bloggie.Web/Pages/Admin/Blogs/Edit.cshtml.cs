@@ -10,7 +10,7 @@ public class EditModel : PageModel
     private readonly BloggieDbContext bloggieDbContext;
 
     [BindProperty]
-    public BlogPost blogPost { get; set; }
+    public BlogPost BlogPost { get; set; }
 
     public EditModel(BloggieDbContext bloggieDbContext)
     {
@@ -19,26 +19,26 @@ public class EditModel : PageModel
 
     public async Task OnGet(Guid id)
     {
-        blogPost = await bloggieDbContext.BlogPosts.FindAsync(id);
+        BlogPost = await bloggieDbContext.BlogPosts.FindAsync(id);
     }
 
     public async Task<IActionResult> OnPostEdit()
     {
         var existingBlogPost = await bloggieDbContext.BlogPosts
-            .FindAsync(blogPost.Id);
+            .FindAsync(BlogPost.Id);
 
         if(existingBlogPost != null)
         {
-            existingBlogPost.Heading = blogPost.Heading;
-            existingBlogPost.PageTitle = blogPost.PageTitle;
-            existingBlogPost.Content = blogPost.Content;
-            existingBlogPost.ShortDescription = blogPost.ShortDescription;
-            existingBlogPost.Author = blogPost.Author;
-            existingBlogPost.FeatureImageUrl = blogPost.FeatureImageUrl;
-            existingBlogPost.UrlHandle = blogPost.UrlHandle;
-            existingBlogPost.PublishedDate = blogPost.PublishedDate;
-            existingBlogPost.Author = blogPost.Author;
-            existingBlogPost.Visible = blogPost.Visible;
+            existingBlogPost.Heading = BlogPost.Heading;
+            existingBlogPost.PageTitle = BlogPost.PageTitle;
+            existingBlogPost.Content = BlogPost.Content;
+            existingBlogPost.ShortDescription = BlogPost.ShortDescription;
+            existingBlogPost.Author = BlogPost.Author;
+            existingBlogPost.FeatureImageUrl = BlogPost.FeatureImageUrl;
+            existingBlogPost.UrlHandle = BlogPost.UrlHandle;
+            existingBlogPost.PublishedDate = BlogPost.PublishedDate;
+            existingBlogPost.Author = BlogPost.Author;
+            existingBlogPost.Visible = BlogPost.Visible;
         }
 
         await bloggieDbContext.SaveChangesAsync();
@@ -47,7 +47,7 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostDelete()
     {
-        var existingBlog = await bloggieDbContext.BlogPosts.FindAsync(blogPost.Id);
+        var existingBlog = await bloggieDbContext.BlogPosts.FindAsync(BlogPost.Id);
 
         if(existingBlog != null)
         {
