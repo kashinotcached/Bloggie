@@ -39,6 +39,8 @@ public class AddModel : PageModel
 
         await blogPostRepository.AddAsync(blogPost);
 
+        TempData["MessageDescription"] = "New blog post created!";
+
         return RedirectToPage("List");
     }
 }

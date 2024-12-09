@@ -25,7 +25,9 @@ public class EditModel : PageModel
     public async Task<IActionResult> OnPostEdit()
     {
         await blogPostRepository.UpdateAsync(BlogPost);
-        return RedirectToPage("List");
+        ViewData["MessageDescription"] = "Record was successfully saved!";
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostDelete()
