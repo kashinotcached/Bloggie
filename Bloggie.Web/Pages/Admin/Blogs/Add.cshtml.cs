@@ -3,6 +3,7 @@ using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Json;
 
 namespace Bloggie.Web.Pages.Admin.Blogs;
 
@@ -39,7 +40,13 @@ public class AddModel : PageModel
 
         await blogPostRepository.AddAsync(blogPost);
 
-        TempData["MessageDescription"] = "New blog post created!";
+        var notification = new Notification
+        {
+            Message = "New blog created!",
+            Type = Enums.NotificationType.Success
+        };
+
+        TempData["Notification"] = JsonSerializer.Serialize(notification);
 
         return RedirectToPage("List");
     }

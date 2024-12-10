@@ -1,6 +1,8 @@
 using Bloggie.Web.Models.Domain;
+using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Json;
 
 namespace Bloggie.Web.Pages.Admin.Blogs;
 
@@ -17,11 +19,10 @@ public class ListModel : PageModel
 
     public async Task OnGet()
     {
-        var messageDescription = (string)TempData["MessageDescription"];
-        
-        if (!string.IsNullOrWhiteSpace(messageDescription))
-            ViewData["MessageDescription"] = messageDescription;
-        
+        var notificationJson = TempData["Notification"]?.ToString();
+        if(notificationJson != null)
+            ViewData["Notification"] = JsonSerializer.Deserialize<Notification>(notificationJson);
+
         BlogPosts = (await blogPostRepository.GetAllAsync())?.ToList();
     }
 }
