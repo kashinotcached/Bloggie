@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Bloggie.Web.Controllers
+namespace Bloggie.Web.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ImagesController : Controller
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ImagesController : Controller
+    [HttpPost]
+    public async Task<IActionResult> UploadAsync(IFormFile file)
     {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("This is the Images GET method!");
-        }
+
     }
 }
