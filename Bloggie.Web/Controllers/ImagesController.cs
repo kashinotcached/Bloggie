@@ -1,5 +1,4 @@
 ﻿using Bloggie.Web.Repositories;
-using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
