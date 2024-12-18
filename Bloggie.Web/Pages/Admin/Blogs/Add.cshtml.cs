@@ -38,7 +38,8 @@ public class AddModel : PageModel
             PageTitle = AddBlogPostRequest.PageTitle,
             PublishedDate = AddBlogPostRequest.PublishedDate,
             ShortDescription = AddBlogPostRequest.ShortDescription,
-            UrlHandle = AddBlogPostRequest.UrlHandle
+            UrlHandle = AddBlogPostRequest.UrlHandle,
+            Visible = AddBlogPostRequest.Visible
         };
 
         await blogPostRepository.AddAsync(blogPost);

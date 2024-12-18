@@ -14,6 +14,9 @@ public class EditModel : PageModel
     [BindProperty]
     public BlogPost BlogPost { get; set; }
 
+    [BindProperty]
+    public IFormFile FeaturedImage { get; set; }
+
     public EditModel(IBlogPostRepository blogPostRepository)
     {
         this.blogPostRepository = blogPostRepository;
