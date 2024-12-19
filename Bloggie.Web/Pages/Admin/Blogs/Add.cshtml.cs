@@ -17,6 +17,9 @@ public class AddModel : PageModel
     [BindProperty]
     public IFormFile FeaturedImage { get; set; }
 
+    [BindProperty]
+    public string Tags { get; set; }
+
     public AddModel(IBlogPostRepository blogPostRepository)
     {
         this.blogPostRepository = blogPostRepository;
@@ -39,7 +42,8 @@ public class AddModel : PageModel
             PublishedDate = AddBlogPostRequest.PublishedDate,
             ShortDescription = AddBlogPostRequest.ShortDescription,
             UrlHandle = AddBlogPostRequest.UrlHandle,
-            Visible = AddBlogPostRequest.Visible
+            Visible = AddBlogPostRequest.Visible,
+            Tags = new List<Tag>(Tags.Split(',').Select(x=> new Tag() { Name = x.Trim() }))
         };
 
         await blogPostRepository.AddAsync(blogPost);
