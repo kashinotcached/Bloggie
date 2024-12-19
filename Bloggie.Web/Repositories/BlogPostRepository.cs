@@ -37,6 +37,8 @@ public class BlogPostRepository : IBlogPostRepository
 
     public async Task<BlogPost> GetAsync(Guid id) => await bloggieDbContext.BlogPosts.FindAsync(id);
 
+    public async Task<BlogPost> GetAsync(string urlHandle) => await bloggieDbContext.BlogPosts.FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
+
     public async Task<BlogPost> UpdateAsync(BlogPost blogPost)
     {
         var existingBlogPost = await bloggieDbContext.BlogPosts
