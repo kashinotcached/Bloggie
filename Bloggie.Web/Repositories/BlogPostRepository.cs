@@ -33,16 +33,23 @@ public class BlogPostRepository : IBlogPostRepository
         return false;
     }
 
-    public async Task<IEnumerable<BlogPost>> GetAllAsync() => await bloggieDbContext.BlogPosts.ToListAsync();
+    public async Task<IEnumerable<BlogPost>> GetAllAsync() => await bloggieDbContext.BlogPosts
+        .Include(nameof(BlogPost.Tags))
+        .ToListAsync();
 
-    public async Task<BlogPost> GetAsync(Guid id) => await bloggieDbContext.BlogPosts.FindAsync(id);
+    public async Task<BlogPost> GetAsync(Guid id) => await bloggieDbContext.BlogPosts
+        .Include(nameof(BlogPost.Tags))
+        .FirstOrDefaultAsync(x => x.Id == id);
 
-    public async Task<BlogPost> GetAsync(string urlHandle) => await bloggieDbContext.BlogPosts.FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
+    public async Task<BlogPost> GetAsync(string urlHandle) => await bloggieDbContext.BlogPosts
+        .Include(nameof(BlogPost.Tags))
+        .FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
 
     public async Task<BlogPost> UpdateAsync(BlogPost blogPost)
     {
         var existingBlogPost = await bloggieDbContext.BlogPosts
-            .FindAsync(blogPost.Id);
+            .Include(nameof(BlogPost.Tags))
+            .FirstOrDefaultAsync(x => x.Id == blogPost.Id);
 
         if (existingBlogPost != null)
         {
@@ -56,6 +63,17 @@ public class BlogPostRepository : IBlogPostRepository
             existingBlogPost.PublishedDate = blogPost.PublishedDate;
             existingBlogPost.Author = blogPost.Author;
             existingBlogPost.Visible = blogPost.Visible;
+
+            if(blogPost.Tags != null && blogPost.Tags.Any())
+            {
+                //Delete the existing tags
+                bloggieDbContext.Tags.RemoveRange(existingBlogPost.Tags);
+
+                //Add new tags
+                blogPost.Tags.ToList().ForEach(x => x.BlogPostId = existingBlogPost.Id);
+                await bloggieDbContext.Tags.AddRangeAsync(blogPost.Tags);
+            }
+
         }
 
         await bloggieDbContext.SaveChangesAsync();
