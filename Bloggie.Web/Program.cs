@@ -2,6 +2,7 @@ using Bloggie.Web.Data;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Services.AddDbContext<BloggieDbContext>(options =>
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("BloggieAuthDbConnectionString")));
+        builder.Configuration.GetConnectionString("BloggieAuthDbConnectionString"),
+        sqlOptions => sqlOptions.CommandTimeout(180)));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>();
