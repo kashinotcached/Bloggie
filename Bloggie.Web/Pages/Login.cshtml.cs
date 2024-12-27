@@ -21,13 +21,18 @@ public class LoginModel : PageModel
     {
     }
 
-    public async Task<IActionResult> OnPost()
+    public async Task<IActionResult> OnPost(string ReturnUrl)
     {
         var signInResult = await signInManager.PasswordSignInAsync(
             LoginViewModel.Username, LoginViewModel.Password, false, false);
 
         if (signInResult.Succeeded)
         {
+            if (!string.IsNullOrWhiteSpace(ReturnUrl))
+            {
+                return RedirectToPage(ReturnUrl);
+            }
+
             return RedirectToPage("Index");
         }
         else
