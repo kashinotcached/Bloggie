@@ -1,6 +1,10 @@
 ﻿@page "/blog/{urlHandle}"
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
 @model Bloggie.Web.Pages.Blog.DetailsModel
 @{
+    ViewData["Title"] = Model.BlogPost.PageTitle;
 }
 
 <div class="container my-5">
@@ -15,7 +19,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <span><i class="bi bi-hand-thumbs-up"></i> @Model.TotalLikes likes</span>
+                    <span>
+                            <a id="btnLike" style="cursor: pointer">
+                                <i class="bi bi-hand-thumbs-up"></i></a>
+                        @Model.TotalLikes likes
+                    </span>
                 </div>
 
                 <div class="mb-3">
@@ -43,3 +51,23 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        const btnLike = document.getElementById('btnLike');
+
+        async function addLikeForBlog() {
+            fetch('/api/blogPostLike/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                },
+                body: JSON.stringify({ blogPostId : '@Model.BlogPost.Id', userId: '@UserManager.GetUserId(User)' })
+            })
+            .then(console.log('request finished.'));
+        }
+
+        btnLike.addEventListener('click', addLikeForBlog);
+    </script>
+}
