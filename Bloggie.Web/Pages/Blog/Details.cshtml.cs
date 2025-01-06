@@ -1,4 +1,5 @@
 using Bloggie.Web.Models.Domain;
+using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,8 @@ namespace Bloggie.Web.Pages.Blog
         [BindProperty]
         public string CommentDescription { get; set; }
 
+        public List<BlogComment> Comments { get; set; }
+
         public DetailsModel(IBlogPostRepository blogPostRepository, IBlogPostLikeRepository blogPostLikeRepository,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -52,6 +55,8 @@ namespace Bloggie.Web.Pages.Blog
                     var userId = userManager.GetUserId(User);
 
                     Liked = likes.Any(x => x.UserId == Guid.Parse(userId));
+
+                    await GetComments();
                 }
 
                 TotalLikes = await blogPostLikeRepository.GetTotalLikesForBlog(BlogPost.Id);
@@ -78,6 +83,24 @@ namespace Bloggie.Web.Pages.Blog
             }
 
             return RedirectToPage("/Blog/Details", new { urlHandle = urlHandle });
+        }
+
+        private async Task GetComments()
+        {
+            var blogPostComments = await blogPostCommentRepository.GetAllAsync(BlogPost.Id);
+
+            var blogCommentsViewModel = new List<BlogComment>();
+            foreach(var blogPostComment in blogPostComments)
+            {
+                blogCommentsViewModel.Add(new BlogComment
+                {
+                    DateAdded = blogPostComment.DateAdded,
+                    Description = blogPostComment.Description,
+                    Username = (await userManager.FindByIdAsync(blogPostComment.UserId.ToString())).UserName
+                });
+
+                Comments = blogCommentsViewModel;
+            }
         }
     }
 }
