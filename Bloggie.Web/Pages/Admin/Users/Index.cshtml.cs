@@ -1,5 +1,6 @@
 using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,6 +11,9 @@ public class IndexModel : PageModel
     private readonly IUserRepository userRepository;
 
     public List<User> Users { get; set; }
+
+    [BindProperty]
+    public AddUser AddUserRequest { get; set; }
 
     public IndexModel(IUserRepository userRepository)
     {
@@ -29,6 +33,29 @@ public class IndexModel : PageModel
                 Username = user.UserName
             });
         }
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPost()
+    {
+        var identityUser = new IdentityUser
+        {
+            UserName = AddUserRequest.Username,
+            Email = AddUserRequest.Email
+        };
+
+        var roles = new List<string> { "User" };
+
+        if (AddUserRequest.AdminCheckBox)
+        {
+            roles.Add("Admin");
+        }
+
+        var result = await userRepository.Add(identityUser, AddUserRequest.Password, roles);
+
+        if (result)
+            return RedirectToPage("/Admin/Users/Index");
 
         return Page();
     }
