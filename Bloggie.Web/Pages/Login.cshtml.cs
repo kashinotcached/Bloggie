@@ -21,7 +21,7 @@ public class LoginModel : PageModel
     {
     }
 
-    public async Task<IActionResult> OnPost(string ReturnUrl)
+    public async Task<IActionResult> OnPost(string? ReturnUrl)
     {
         if (ModelState.IsValid)
         {
