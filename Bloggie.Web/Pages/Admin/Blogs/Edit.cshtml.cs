@@ -4,6 +4,7 @@ using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace Bloggie.Web.Pages.Admin.Blogs;
@@ -20,6 +21,7 @@ public class EditModel : PageModel
     public IFormFile FeaturedImage { get; set; }
 
     [BindProperty]
+    [Required]
     public string Tags { get; set; }
 
     public EditModel(IBlogPostRepository blogPostRepository)
@@ -52,38 +54,43 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostEdit()
     {
-        try
-        {
-            var blogPostDomainModel = new BlogPost
-            {
-                Id = BlogPost.Id,
-                Heading = BlogPost.Heading,
-                PageTitle = BlogPost.PageTitle,
-                Content = BlogPost.Content,
-                ShortDescription = BlogPost.ShortDescription,
-                FeatureImageUrl = BlogPost.FeatureImageUrl,
-                UrlHandle = BlogPost.UrlHandle,
-                PublishedDate = BlogPost.PublishedDate,
-                Author = BlogPost.Author,
-                Visible = BlogPost.Visible,
-                Tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }))
-            };
+        ValidateEditBlogPost();
 
-            await blogPostRepository.UpdateAsync(blogPostDomainModel);
-
-            ViewData["Notification"] = new Notification
-            {
-                Message = "Record Updated Successfully!",
-                Type = Enums.NotificationType.Success
-            };
-        }
-        catch (Exception ex)
+        if (ModelState.IsValid)
         {
-            ViewData["Notification"] = new Notification
+            try
             {
-                Message = ex.Message,
-                Type = Enums.NotificationType.Error
-            };
+                var blogPostDomainModel = new BlogPost
+                {
+                    Id = BlogPost.Id,
+                    Heading = BlogPost.Heading,
+                    PageTitle = BlogPost.PageTitle,
+                    Content = BlogPost.Content,
+                    ShortDescription = BlogPost.ShortDescription,
+                    FeatureImageUrl = BlogPost.FeatureImageUrl,
+                    UrlHandle = BlogPost.UrlHandle,
+                    PublishedDate = BlogPost.PublishedDate,
+                    Author = BlogPost.Author,
+                    Visible = BlogPost.Visible,
+                    Tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }))
+                };
+
+                await blogPostRepository.UpdateAsync(blogPostDomainModel);
+
+                ViewData["Notification"] = new Notification
+                {
+                    Message = "Record Updated Successfully!",
+                    Type = Enums.NotificationType.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                ViewData["Notification"] = new Notification
+                {
+                    Message = ex.Message,
+                    Type = Enums.NotificationType.Error
+                };
+            }
         }
 
         return Page();
@@ -106,5 +113,19 @@ public class EditModel : PageModel
         }
 
         return Page();
+    }
+
+    private void ValidateEditBlogPost()
+    {
+        if (!string.IsNullOrWhiteSpace(BlogPost.Heading))
+        {
+            // check for minimum length
+            if(BlogPost.Heading.Length < 10 || BlogPost.Heading.Length > 72)
+            {
+                ModelState.AddModelError("BlogPost.Heading",
+                    "Heading can only be between 10 and 72 characters.");
+            }
+            // check for maximum length
+        }
     }
 }
