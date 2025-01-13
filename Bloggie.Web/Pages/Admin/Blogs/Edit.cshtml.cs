@@ -14,7 +14,7 @@ public class EditModel : PageModel
     private readonly IBlogPostRepository blogPostRepository;
 
     [BindProperty]
-    public BlogPost BlogPost { get; set; }
+    public EditBlogPostRequest BlogPost { get; set; }
 
     [BindProperty]
     public IFormFile FeaturedImage { get; set; }
@@ -29,11 +29,24 @@ public class EditModel : PageModel
 
     public async Task OnGet(Guid id)
     {
-        BlogPost = await blogPostRepository.GetAsync(id);
+        var blogPostDomainModel = await blogPostRepository.GetAsync(id);
 
-        if (BlogPost != null && BlogPost.Tags != null)
+        if (blogPostDomainModel != null && blogPostDomainModel.Tags != null)
         {
-            Tags = string.Join(",", BlogPost.Tags.Select(x => x.Name));
+            BlogPost = new EditBlogPostRequest
+            {
+                Id = blogPostDomainModel.Id,
+                Heading = blogPostDomainModel.Heading,
+                PageTitle = blogPostDomainModel.PageTitle,
+                Content = blogPostDomainModel.Content,
+                ShortDescription = blogPostDomainModel.ShortDescription,
+                FeatureImageUrl = blogPostDomainModel.FeatureImageUrl,
+                UrlHandle = blogPostDomainModel.UrlHandle,
+                PublishedDate = blogPostDomainModel.PublishedDate,
+                Author = blogPostDomainModel.Author,
+            };
+
+            Tags = string.Join(",", blogPostDomainModel.Tags.Select(x => x.Name));
         }
     }
 
@@ -41,9 +54,22 @@ public class EditModel : PageModel
     {
         try
         {
-            BlogPost.Tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim()}));
+            var blogPostDomainModel = new BlogPost
+            {
+                Id = BlogPost.Id,
+                Heading = BlogPost.Heading,
+                PageTitle = BlogPost.PageTitle,
+                Content = BlogPost.Content,
+                ShortDescription = BlogPost.ShortDescription,
+                FeatureImageUrl = BlogPost.FeatureImageUrl,
+                UrlHandle = BlogPost.UrlHandle,
+                PublishedDate = BlogPost.PublishedDate,
+                Author = BlogPost.Author,
+                Visible = BlogPost.Visible,
+                Tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }))
+            };
 
-            await blogPostRepository.UpdateAsync(BlogPost);
+            await blogPostRepository.UpdateAsync(blogPostDomainModel);
 
             ViewData["Notification"] = new Notification
             {
