@@ -5,14 +5,16 @@
 
 @model Bloggie.Web.Pages.Blog.DetailsModel
 @{
-    ViewData["Title"] = Model.BlogPost.PageTitle;
 }
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-6">
-            @if (Model.BlogPost != null)
-            {
+@if (Model.BlogPost != null)
+{
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-6">
+
+                ViewData["Title"] = Model.BlogPost.PageTitle;
+
                 <h1 class="mb-3">@Model.BlogPost.Heading</h1>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-secondary">@Model.BlogPost.Author</span>
@@ -69,6 +71,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Comment Description</label>
                                     <input type="text" class="form-control" asp-for="CommentDescription" />
+                                    <span class="text-danger" asp-validation-for="CommentDescription"></span>
                                 </div>
                                 <div class="mb-3">
                                     <button type="submit" class="btn btn-dark">Add Comment</button>
@@ -79,7 +82,7 @@
                     </div>
 
                     <div class="card-body">
-                        @if(Model.Comments != null && Model.Comments.Any())
+                        @if (Model.Comments != null && Model.Comments.Any())
                         {
                             @foreach (var comment in Model.Comments)
                             {
@@ -100,17 +103,20 @@
                         {
                             <p>No Comments.</p>
                         }
-                        
+
                     </div>
                 </div>
-            }
-            else
-            {
-                <h2>Blog Post is not found!</h2>
-            }
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="container mt-3">
+        <h2>Blog Post is not found!</h2>
+    </div>
+}
+
 
 @section Scripts {
     <script>
